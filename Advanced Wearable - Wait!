@@ -1,0 +1,61 @@
+// ---------------------------------------------------------------- //
+// Arduino Ultrasoninc Sensor HC-SR04
+// ---------------------------------------------------------------- //
+
+#define echoPin 2 // attach pin D2 Arduino to pin Echo of HC-SR04
+#define trigPin 3 //attach pin D3 Arduino to pin Trig of HC-SR04
+
+// defines variables
+long duration; // variable for the duration of sound wave travel
+int distance, incomingByte; // variable for the distance measurement
+const int tensPin = 13; // pin that TENS attached to;
+
+void setup() {
+  //initialize serial communication
+  Serial.begin(9600); 
+  
+  pinMode(trigPin, OUTPUT); // Sets the trigPin as an OUTPUT
+  pinMode(echoPin, INPUT); // Sets the echoPin as an INPUT
+  pinMode(tensPin, OUTPUT);
+
+  Serial.println("Ultrasonic Sensor & TENS Test"); // print some text in Serial Monitor
+  Serial.println("with Arduino UNO");
+}
+void loop() {
+  // Clears trigPin condition
+
+  digitalWrite(trigPin, LOW);
+  delayMicroseconds(2);
+  
+  // Sets trigPin ACTIVE for 10 ms
+
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10);
+  digitalWrite(trigPin, LOW);
+  
+  // Reads the echoPin, returns the sound wave travel time in ms
+
+  duration = pulseIn(echoPin, HIGH);
+  
+  // Calculating the distance
+  
+  distance = duration * 0.034 / 2; // Speed of sound wave divided by 2 (go and back)
+  
+  // Displays the distance on the Serial Monitor
+  
+  Serial.print("Distance: ");
+  if (distance >= 200 || distance <= 2){
+    Serial.println("Out of Range");
+  }
+  // Check if the distance is too close and turn TENS on
+  else if (distance > 2 && distance <= 30){
+    digitalWrite(tensPin, HIGH);
+    Serial.print("Alert ");
+    }
+  else{
+    digitalWrite(tensPin, LOW);
+   }
+  Serial.print(distance);
+  Serial.println(" cm");
+  delay(500);
+}
